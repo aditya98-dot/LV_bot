@@ -39,6 +39,7 @@ bool statePintu;
 // deklarasi awal nama fungsi (WAJIB)
 void bacaTigaTegangan();
 void kirimSMS(String pesan);
+void setupSim800();
 
 
 
@@ -51,6 +52,7 @@ void setup() {
 
   // Properti SIM800C
   SIM800C.begin(9600);
+  setupSim800();
 
   // properti sensor pintu
   pinMode(PIN_SENSOR_PINTU, INPUT_PULLUP);
@@ -60,19 +62,19 @@ void loop()
 {
   bool statePintu = digitalRead(PIN_SENSOR_PINTU);
   Serial.println(statePintu);
-  
- // bacaTigaTegangan();
+
+  // bacaTigaTegangan();
 
   if (statePintu == STATE_PINTU_TERBUKA)
   {
     kirimSMS("Pintu LVboard terbuka!");
-    while(1);
+    while (1);
   }
-//  if (bacaTegangan_R < AMBANG_BATAS_PHASA_MATI)
-//  {
-//    kirimSMS("Fase di R mati!");
-//    while (1);
-//  }
+  //  if (bacaTegangan_R < AMBANG_BATAS_PHASA_MATI)
+  //  {
+  //    kirimSMS("Fase di R mati!");
+  //    while (1);
+  //  }
 
 
 }
@@ -124,17 +126,21 @@ void bacaTigaTegangan()
 /* Paremeter
     pesan --> string (perhatikan jumlah karakter ! jangang lebih dari serial buffer 64 bytes / characters)
 */
+void setupSim800 ()
+{
+  SIM800C.println("AT+CMGF=1");
+  delay(1000);
+  SIM800C.println("AT+CNMI=2,2,0,0,0");
+  SIM800C.println("AT+CMGF=1");
+  delay(1000);
+  SIM800C.flush();
+}
+
 void kirimSMS(String pesan)
 {
   String msg = pesan;
-  SIM800C.println("AT+CMGF=1");
-  Serial.println("SIM800C dimulai pada 9600");
-  delay(1000);
-  Serial.println("kirim pesan");
-  SIM800C.println("AT+CNMI=2,2,0,0,0");
-  SIM800C.println("AT+CMGF=1");
-  delay(2000); // delay harus segini!!!
-  SIM800C.println("AT+CMGS=\"085333389189\"\r"); // nomor telepon
+
+  SIM800C.println("AT+CMGS=\"085333389189\"\r" ); // nomor telepon diubah di sini!
   delay(1000);
   SIM800C.println(msg);
   delay(100);
