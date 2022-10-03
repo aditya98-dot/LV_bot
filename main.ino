@@ -31,11 +31,16 @@ RunningStatistics inputStats_T; // untuk phasa T
 SoftwareSerial SIM800C(4, 5);
 // -------- akhir dari SIM800C --------- //
 
+// -------- Sensor Pintu ----- //
+bool statePintu;
+// -------- akhir dari Sensor Pintu ----- //
 
 
 // deklarasi awal nama fungsi (WAJIB)
 void bacaTigaTegangan();
 void kirimSMS(String pesan);
+
+
 
 void setup() {
   Serial.begin(BAUD_RATE);
@@ -46,20 +51,38 @@ void setup() {
 
   // Properti SIM800C
   SIM800C.begin(9600);
+
+  // properti sensor pintu
+  pinMode(PIN_SENSOR_PINTU, INPUT_PULLUP);
 }
 
 void loop()
 {
-   bacaTigaTegangan();
+  bool statePintu = digitalRead(PIN_SENSOR_PINTU);
+  Serial.println(statePintu);
+  
+ // bacaTigaTegangan();
 
-  if(bacaTegangan_R < AMBANG_BATAS_PHASA_MATI)
+  if (statePintu == STATE_PINTU_TERBUKA)
   {
-    kirimSMS("Fase di R mati!");
+    kirimSMS("Pintu LVboard terbuka!");
     while(1);
   }
+//  if (bacaTegangan_R < AMBANG_BATAS_PHASA_MATI)
+//  {
+//    kirimSMS("Fase di R mati!");
+//    while (1);
+//  }
 
 
 }
+
+
+
+
+
+
+
 
 
 // fungsi - fungsi
@@ -98,9 +121,9 @@ void bacaTigaTegangan()
   }
 }
 
-/* Paremeter 
- *  pesan --> string (perhatikan jumlah karakter ! jangang lebih dari serial buffer 64 bytes / characters)
- */
+/* Paremeter
+    pesan --> string (perhatikan jumlah karakter ! jangang lebih dari serial buffer 64 bytes / characters)
+*/
 void kirimSMS(String pesan)
 {
   String msg = pesan;
