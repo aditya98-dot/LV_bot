@@ -27,7 +27,7 @@ RunningStatistics inputStats_T;
 // -------- akhir dari Sensor Tegangan ----------- //
 
 // deklarasi awal nama fungsi (WAJIB)
-void bacaTegangan();
+void bacaTigaTegangan();
 
 void setup() {
   Serial.begin(BAUD_RATE);
@@ -39,46 +39,44 @@ void setup() {
 
 void loop()
 {
+  bacaTigaTegangan();
 
 
-  while ( true )
-  {
-    bacaTegangan_R = analogRead(PIN_SENSOR_TEGANGAN_R);
-    inputStats_R.input(bacaTegangan_R);
-
-    bacaTegangan_S = analogRead(PIN_SENSOR_TEGANGAN_S);
-    inputStats_S.input(bacaTegangan_S);
-
-    bacaTegangan_T = analogRead(PIN_SENSOR_TEGANGAN_T);
-    inputStats_T.input(bacaTegangan_T);
-
-    if ((unsigned long)(millis() - previousMillis) >= printPeriod) {
-      previousMillis = millis();
-
-      bacaTegangan_R = intercept + slope * inputStats_R.sigma(); //Calibartions for offset and amplitude
-      bacaTegangan_R = bacaTegangan_R * (49.3231);             //Further calibrations for the amplitude
-
-      bacaTegangan_S = intercept + slope * inputStats_S.sigma(); //Calibartions for offset and amplitude
-      bacaTegangan_S = bacaTegangan_S * (49.3231);             //Further calibrations for the amplitude
-
-      bacaTegangan_T = intercept + slope * inputStats_T.sigma(); //Calibartions for offset and amplitude
-      bacaTegangan_T = bacaTegangan_T * (49.3231);             //Further calibrations for the amplitude
-
-      Serial.print( "Voltage R: " );
-      Serial.println( bacaTegangan_R );
-      Serial.print( "Voltage S: " );
-      Serial.println( bacaTegangan_S );
-      Serial.print( "Voltage T: " );
-      Serial.println( bacaTegangan_T );
-
-    }
-  }
 }
 
 
 // fungsi - fungsi
 
-void bacaTegangan()
+void bacaTigaTegangan()
 {
 
+  bacaTegangan_R = analogRead(PIN_SENSOR_TEGANGAN_R);
+  inputStats_R.input(bacaTegangan_R);
+
+  bacaTegangan_S = analogRead(PIN_SENSOR_TEGANGAN_S);
+  inputStats_S.input(bacaTegangan_S);
+
+  bacaTegangan_T = analogRead(PIN_SENSOR_TEGANGAN_T);
+  inputStats_T.input(bacaTegangan_T);
+
+  if ((unsigned long)(millis() - previousMillis) >= printPeriod) {
+    previousMillis = millis();
+
+    bacaTegangan_R = intercept + slope * inputStats_R.sigma(); //Calibartions for offset and amplitude
+    bacaTegangan_R = bacaTegangan_R * (49.3231);             //Further calibrations for the amplitude
+
+    bacaTegangan_S = intercept + slope * inputStats_S.sigma(); //Calibartions for offset and amplitude
+    bacaTegangan_S = bacaTegangan_S * (49.3231);             //Further calibrations for the amplitude
+
+    bacaTegangan_T = intercept + slope * inputStats_T.sigma(); //Calibartions for offset and amplitude
+    bacaTegangan_T = bacaTegangan_T * (49.3231);             //Further calibrations for the amplitude
+
+    Serial.print( "Voltage R: " );
+    Serial.println( bacaTegangan_R );
+    Serial.print( "Voltage S: " );
+    Serial.println( bacaTegangan_S );
+    Serial.print( "Voltage T: " );
+    Serial.println( bacaTegangan_T );
+
+  }
 }
