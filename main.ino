@@ -60,21 +60,36 @@ void setup() {
 
 void loop()
 {
+  /*
+        Alur program:
+      1. baca tegangan (ketiga fasa)
+      2. jika tegangan tidak memenuhi kondis (mungkin lebih dari 3 kondisi), kirim SMS dengan pesan sesuai kendala
+      3. baca kondisi pintu
+      4. jika terbuka kirim pesan
+      5. ulang dari awal
+  */
+
+  //1. baca tegangan (ketiga fasa)
+  bacaTigaTegangan();
+
+//  2. jika tegangan tidak memenuhi kondis (mungkin lebih dari 3 kondisi), kirim SMS dengan pesan sesuai kendala
+  if (bacaTegangan_R < AMBANG_BATAS_PHASA_MATI)
+  {
+    kirimSMS("Fase di R mati!");
+    while (1);
+  }
+
+  // 3. baca kondisi pintu
   bool statePintu = digitalRead(PIN_SENSOR_PINTU);
-  Serial.println(statePintu);
+  //  Serial.println(statePintu);
 
-  // bacaTigaTegangan();
-
+  // 4. jika terbuka kirim pesan
   if (statePintu == STATE_PINTU_TERBUKA)
   {
     kirimSMS("Pintu LVboard terbuka!");
     while (1);
   }
-  //  if (bacaTegangan_R < AMBANG_BATAS_PHASA_MATI)
-  //  {
-  //    kirimSMS("Fase di R mati!");
-  //    while (1);
-  //  }
+
 
 
 }
@@ -140,7 +155,7 @@ void kirimSMS(String pesan)
 {
   String msg = pesan;
 
-  SIM800C.println("AT+CMGS=\"085333389189\"\r" ); // nomor telepon diubah di sini!
+  SIM800C.println("AT+CMGS=\"081337787295\"\r" ); // nomor telepon diubah di sini!
   delay(1000);
   SIM800C.println(msg);
   delay(100);
