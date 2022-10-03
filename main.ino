@@ -1,9 +1,9 @@
 #include <Filters.h>
 #include "header.h"
 #include "io_pin.h"
+#include "SoftwareSerial.h"
 
-// Variabel
-
+// Variabel dan objek
 // ------- Sensor Tegangan AC ------- //
 int sensorTeganganAC_R = 0;
 int sensorTeganganAC_S = 0;
@@ -21,13 +21,21 @@ const float slope = 0.0518;   // adjust untuk kalibrasi
 unsigned long printPeriod = 1000;     //Refresh rate
 unsigned long previousMillis = 0;
 
-RunningStatistics inputStats_R;
-RunningStatistics inputStats_S;
-RunningStatistics inputStats_T;
+RunningStatistics inputStats_R; // untuk phasa R
+RunningStatistics inputStats_S; // untuk phasa S
+RunningStatistics inputStats_T; // untuk phasa T
+
 // -------- akhir dari Sensor Tegangan ----------- //
+
+// -------- SIM800C ------- //
+SoftwareSerial SIM800C(4, 5);
+// -------- akhir dari SIM800C --------- //
+
+
 
 // deklarasi awal nama fungsi (WAJIB)
 void bacaTigaTegangan();
+void kirimSMS(String pesan);
 
 void setup() {
   Serial.begin(BAUD_RATE);
@@ -35,11 +43,20 @@ void setup() {
   inputStats_R.setWindowSecs(windowLength);
   inputStats_S.setWindowSecs(windowLength);
   inputStats_T.setWindowSecs(windowLength);
+
+  // Properti SIM800C
+  SIM800C.begin(9600);
 }
 
 void loop()
 {
-  bacaTigaTegangan();
+   bacaTigaTegangan();
+
+  if(bacaTegangan_R < AMBANG_BATAS_PHASA_MATI)
+  {
+    kirimSMS("Fase di R mati!");
+    while(1);
+  }
 
 
 }
@@ -79,4 +96,25 @@ void bacaTigaTegangan()
     Serial.println( bacaTegangan_T );
 
   }
+}
+
+/* Paremeter 
+ *  pesan --> string (perhatikan jumlah karakter ! jangang lebih dari serial buffer 64 bytes / characters)
+ */
+void kirimSMS(String pesan)
+{
+  String msg = pesan;
+  SIM800C.println("AT+CMGF=1");
+  Serial.println("SIM800C dimulai pada 9600");
+  delay(1000);
+  Serial.println("kirim pesan");
+  SIM800C.println("AT+CNMI=2,2,0,0,0");
+  SIM800C.println("AT+CMGF=1");
+  delay(2000); // delay harus segini!!!
+  SIM800C.println("AT+CMGS=\"085333389189\"\r"); // nomor telepon
+  delay(1000);
+  SIM800C.println(msg);
+  delay(100);
+  SIM800C.println((char)26);
+  delay(1000);
 }
