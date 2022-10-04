@@ -72,13 +72,78 @@ void loop()
   //1. baca tegangan (ketiga fasa)
   bacaTigaTegangan();
 
-//  2. jika tegangan tidak memenuhi kondis (mungkin lebih dari 3 kondisi), kirim SMS dengan pesan sesuai kendala
-  if (bacaTegangan_R < AMBANG_BATAS_PHASA_MATI)
+  //  2. jika tegangan tidak memenuhi kondis (mungkin lebih dari 3 kondisi), kirim SMS dengan pesan sesuai kendala
+  // Fasa R Mati
+  if (bacaTegangan_R < AMBANG_BATAS_FASA_MATI)
   {
-    kirimSMS("Fase di R mati!");
+    kirimSMS("Fasa R mati!");
+    while (1);
+  }
+  
+  // Fasa R Hidup Kembali
+  else if (bacaTegangan_R > AMBANG_BATAS_FASA_HIDUP)
+  {
+    kirimSMS("Fasa R Sudah Normal!");
+    while (1);
+  } 
+  
+  // Fasa R & S Mati
+  else if (bacaTegangan_R && bacaTegangan_S < AMBANG_BATAS_FASA_MATI)
+  {
+    kirimSMS("Fasa R & S mati!");
+    while (1);
+  }
+  
+  // Fasa R & S Hidup Kembali
+  else if (bacaTegangan_R && bacaTegangan_S > AMBANG_BATAS_FASA_HIDUP)
+  {
+    kirimSMS("Fasa R & S Sudah Normal!");
     while (1);
   }
 
+    // Fasa R & T Mati
+  else if (bacaTegangan_R && bacaTegangan_T < AMBANG_BATAS_FASA_MATI)
+  {
+    kirimSMS("Fasa R & T mati!");
+    while (1);
+  }
+  
+  // Fasa R & T Hidup Kembali
+  else if (bacaTegangan_R && bacaTegangan_T > AMBANG_BATAS_FASA_HIDUP)
+  {
+    kirimSMS("Fasa R & T Sudah Normal!");
+    while (1);
+  }
+
+    // Fasa S & T Mati
+  else if (bacaTegangan_S && bacaTegangan_T < AMBANG_BATAS_FASA_MATI)
+  {
+    kirimSMS("Fasa S & T mati!");
+    while (1);
+  }
+  
+  // Fasa S & T Hidup Kembali
+  else if (bacaTegangan_S && bacaTegangan_T > AMBANG_BATAS_FASA_HIDUP)
+  {
+    kirimSMS("Fasa S & T Sudah Normal!");
+    while (1);
+  }
+
+    // Fasa R, S, T Mati
+  else if (bacaTegangan_R && bacaTegangan_S && bacaTegangan_T < AMBANG_BATAS_FASA_MATI)
+  {
+    kirimSMS("Fasa R, S, T mati!");
+    while (1);
+  }
+  
+  // Fasa R & S Hidup Kembali
+  else if (bacaTegangan_R && bacaTegangan_S && bacaTegangan_T> AMBANG_BATAS_FASA_HIDUP)
+  {
+    kirimSMS("Fasa R, S, T Sudah Normal!");
+    while (1);
+  }
+
+  
   // 3. baca kondisi pintu
   bool statePintu = digitalRead(PIN_SENSOR_PINTU);
   //  Serial.println(statePintu);
@@ -89,17 +154,7 @@ void loop()
     kirimSMS("Pintu LVboard terbuka!");
     while (1);
   }
-
-
-
 }
-
-
-
-
-
-
-
 
 
 // fungsi - fungsi
